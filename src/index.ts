@@ -1,38 +1,51 @@
 import 'jest';
-import process from 'process';
-import { Pool } from 'pg';
+import { Pool, ClientConfig } from 'pg';
 import generate from 'nanoid/generate';
 
 const nanoid = (): string =>
   generate('0123456789abcdefghijklmnopqrstuvwxyz', 15);
 
+export interface Options {
+  connection?: ClientConfig;
+  eachTest?: boolean;
+  initialDatabase?: string;
+}
+
 export interface Context {
   pool: Pool;
 }
 
-export function connectTestDatabase(each = false): Context {
-  const dbUser = process.env.DB_USER || 'postgres';
-  const dbName = process.env.DB_NAME || `test_${nanoid()}`;
+export function connectTestDatabase(options?: Options): Context {
+  const { connection = {}, eachTest = false, initialDatabase = 'postgres' } =
+    options || {};
+
+  if (!connection.database) {
+    connection.database = `test_${nanoid()}`;
+  }
+  if (!connection.user) {
+    connection.user = 'postgres';
+  }
+
   const context: Partial<Context> = {};
 
   async function before(): Promise<void> {
-    context.pool = new Pool({ database: 'postgres', user: dbUser });
-    await context.pool.query(`CREATE DATABASE ${dbName}`);
+    context.pool = new Pool({ ...connection, database: initialDatabase });
+    await context.pool.query(`CREATE DATABASE ${connection.database}`);
     await context.pool.end();
-    context.pool = new Pool({ database: dbName, user: dbUser });
+    context.pool = new Pool(connection);
   }
 
   async function after(): Promise<void> {
     if (context.pool) {
       await context.pool.end();
-      context.pool = new Pool({ database: 'postgres', user: dbUser });
-      await context.pool.query(`DROP DATABASE ${dbName}`);
+      context.pool = new Pool({ ...connection, database: initialDatabase });
+      await context.pool.query(`DROP DATABASE ${connection.database}`);
       await context.pool.end();
       context.pool = undefined;
     }
   }
 
-  if (each) {
+  if (eachTest) {
     beforeEach(before);
     afterEach(after);
   } else {
