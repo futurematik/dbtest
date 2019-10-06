@@ -1,6 +1,6 @@
 {
   "name": "@fmtk/dbtest",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "util for running tests in a database",
   "main": "lib/index.js",
   "repository": "https://github.com/futurematik/dbtest",
