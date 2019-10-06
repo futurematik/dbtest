@@ -1,7 +1,10 @@
 import 'jest';
 import process from 'process';
 import { Pool } from 'pg';
-import nanoid from 'nanoid';
+import generate from 'nanoid/generate';
+
+const nanoid = (): string =>
+  generate('0123456789abcdefghijklmnopqrstuvwxyz', 15);
 
 export interface Context {
   pool: Pool;

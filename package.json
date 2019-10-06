@@ -7,9 +7,10 @@
   "author": "Gordon Leigh <gordon.leigh@futurematik.co.uk>",
   "license": "MIT",
   "dependencies": {
-    "pg": "^7.12.1",
     "@types/pg": "^7.11.2",
-    "nanoid": "^2.1.2"
+    "jest": "^24.9.0",
+    "nanoid": "^2.1.2",
+    "pg": "^7.12.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
@@ -20,7 +21,6 @@
     "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
@@ -44,6 +44,6 @@
     "postversion": "git push --follow-tags",
     "prepare": "npm run build",
     "preversion": "npm run build",
-    "test": "echo 'No tests defined'"
+    "test": "jest"
   }
 }
